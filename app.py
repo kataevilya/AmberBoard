@@ -9,7 +9,13 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super-secret-amber-key-123'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///amberboard.db'
+
+# Настройка БД: берем Postgres из Render, либо локальный SQLite
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///amberboard.db')
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -18,6 +24,7 @@ login_manager.login_view = 'login'
 
 IMGBB_API_KEY = "614175d15985961d996a8c076c776f08"
 
+# --- Модели базы данных ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -36,6 +43,11 @@ class Post(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# --- Фикс ошибки: БД создается при импорте (нужно для Gunicorn на Render) ---
+with app.app_context():
+    db.create_all()
+
+# --- Вспомогательная функция для картинок ---
 def upload_image(image_file):
     url = "https://api.imgbb.com/1/upload"
     payload = {
@@ -47,6 +59,7 @@ def upload_image(image_file):
         return response.json()['data']['url']
     return None
 
+# --- Маршруты (Routes) ---
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST' and current_user.is_authenticated:
@@ -131,6 +144,4 @@ def profile():
     return render_template('profile.html')
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True, host='0.0.0.0', port=5000)
