@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>AmberBoard</title>
+    <style>
+        body { background-color: #FDF1D6; color: #800000; font-family: Arial, sans-serif; font-size: 10pt; margin: 10px; }
+        a { color: #D55A00; text-decoration: none; }
+        a:hover { color: #FF0000; }
+        .header { text-align: center; font-size: 24pt; font-weight: bold; margin-bottom: 20px; color: #AF4000; letter-spacing: 2px;}
+        .nav { text-align: right; margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid #D55A00; padding-bottom: 5px; }
+        .post-form { background-color: #F8D39D; border: 1px solid #D55A00; display: inline-block; padding: 10px; margin-bottom: 20px; }
+        .post-form table { border-collapse: collapse; }
+        .post-form td { padding: 2px; }
+        .post-form input[type="text"], .post-form textarea, .post-form input[type="password"] { border: 1px solid #A9A9A9; }
+        .post { background-color: #F5E2C8; border: 1px solid #D55A00; padding: 10px; margin-bottom: 15px; max-width: 800px; display: table; }
+        .post-header { font-size: 9pt; margin-bottom: 5px; }
+        .post-name { color: #AF4000; font-weight: bold; }
+        .post-image { float: left; margin-right: 15px; margin-bottom: 10px; }
+        .post-image img { max-width: 250px; border: 2px solid #D55A00; }
+        .post-content { display: block; overflow: hidden; white-space: pre-wrap; font-size: 10pt;}
+        .del-btn { color: #800000; font-size: 8pt; text-decoration: underline; margin-left: 10px; cursor: pointer; }
+        .flash { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="/">[Главная]</a>
+        {% if current_user.is_authenticated %}
+            <a href="/profile">[Профиль: {{ current_user.username }}]</a>
+            <a href="/logout">[Выход]</a>
+        {% else %}
+            <a href="/login">[Вход]</a>
+            <a href="/register">[Регистрация]</a>
+        {% endif %}
+    </div>
+    <div class="header">AmberBoard</div>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for message in messages %}<div class="flash">{{ message }}</div>{% endfor %}{% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+</body>
+</html>

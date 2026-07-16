@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<center>
+    <div class="post-form">
+        <h3>Вход</h3>
+        <form method="POST">
+            <table>
+                <tr><td>Имя:</td><td><input type="text" name="username" required></td></tr>
+                <tr><td>Пароль:</td><td><input type="password" name="password" required></td></tr>
+                <tr><td></td><td><input type="submit" value="Войти"></td></tr>
+            </table>
+        </form>
+    </div>
+</center>
+{% endblock %}
