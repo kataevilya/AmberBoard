@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AmberBoard - /b/</title>
-    <!-- Путь к стилям из корня -->
-    <link rel="stylesheet" href="../style.css"> 
+    <title>AmberBoard - /{{ board }}/</title>
+    <!-- Правильное подключение стилей из папки static -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <!-- Тот самый градиентный топ-бар -->
+    <!-- Тот самый легендарный градиент-бар -->
     <div class="adminbar">
         <span>[ 
             <a href="/b/" title="Бред">b</a> / 
@@ -18,5 +18,5 @@
     </div>
     
     <div class="boardBanner">
-        <div class="boardTitle">/b/ - Бред</div>
+        <div class="boardTitle">/{{ board }}/ - {{ board_title | default('Бред') }}</div>
     </div>
