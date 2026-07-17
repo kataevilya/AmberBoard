@@ -1,0 +1,146 @@
+/* Классическая синяя тема 4chan (Yotsuba B) */
+body {
+    background-color: #eef2ff;
+    color: #000000;
+    font-family: arial, helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Настоящий градиент верхней панели */
+.adminbar {
+    background: linear-gradient(to bottom, #d9e2ef 0%, #b7c5d9 100%);
+    border-bottom: 1px solid #89a;
+    padding: 4px 8px;
+    font-size: 13px;
+    color: #34345c;
+}
+
+.adminbar a {
+    text-decoration: none;
+    color: #34345c;
+    margin-right: 5px;
+}
+
+.adminbar a:hover {
+    color: #dd0000;
+}
+
+.boardBanner {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.boardBanner .boardTitle {
+    font-family: tahoma, sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    color: #af0a0f;
+    letter-spacing: 2px;
+}
+
+/* Табличная форма отправки как на 4чан */
+.postForm {
+    display: table;
+    margin: 0 auto 20px auto;
+    background-color: #eaeeff;
+    border: 1px solid #b7c5d9;
+}
+
+.postForm table {
+    border-collapse: collapse;
+}
+
+.postForm td {
+    padding: 2px 5px;
+    font-size: 13px;
+}
+
+.postForm tr td:first-child {
+    background-color: #98e;
+    color: #000;
+    font-weight: bold;
+    border: 1px solid #000;
+    width: 80px;
+}
+
+.postForm input[type="text"], .postForm textarea {
+    border: 1px solid #aaa;
+    width: 300px;
+    font-family: inherit;
+}
+
+/* Эмодзи-панель в стиле старого 4pda */
+.emoji-panel {
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    padding: 4px;
+    margin-top: 4px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    width: 300px;
+}
+
+.emoji {
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+
+.emoji:hover {
+    background: #ddd;
+}
+
+/* Дизайн постов */
+.postContainer {
+    margin: 4px 0;
+}
+
+.reply {
+    background-color: #d6daf0;
+    border-right: 1px solid #b7c5d9;
+    border-bottom: 1px solid #b7c5d9;
+    padding: 4px 8px;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.postInfo {
+    font-size: 13px;
+    color: #117743;
+}
+
+.postInfo .name {
+    font-weight: bold;
+    color: #117743;
+}
+
+.postInfo .postNum a {
+    text-decoration: none;
+    color: #34345c;
+}
+
+.share-btn {
+    cursor: pointer;
+    margin-left: 5px;
+    color: #34345c;
+    background: none;
+    border: none;
+    font-size: 12px;
+}
+
+.share-btn:hover {
+    color: #dd0000;
+}
+
+.postMessage {
+    margin: 10px 15px;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.greentext {
+    color: #789922;
+    font-family: monospace;
+}
