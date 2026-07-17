@@ -1,209 +1,39 @@
-/* Оригинальный стиль 4chan Yotsuba (Peach/Green) */
-body {
-    background-color: #ffffee;
-    color: #800000;
-    font-family: arial, helvetica, sans-serif;
-    margin: 0;
-    padding: 0;
-    font-size: 13px;
-}
+/* --- НОВЫЕ ФУНКЦИИ --- */
 
-/* Градиентная верхняя панель */
-.adminbar {
-    background: linear-gradient(to bottom, #fff0e4 0%, #fed6af 100%);
-    border-bottom: 1px solid #d9bfb7;
-    padding: 4px 8px;
-    font-size: 12px;
-    color: #4f0a0b;
-}
-
-.adminbar a {
-    text-decoration: none;
-    color: #34345c;
-    font-weight: bold;
-}
-
-.adminbar a:hover {
-    color: #ff0000;
-}
-
-/* Шапка с красным логотипом */
-.boardBanner {
-    text-align: center;
-    margin: 15px 0;
-}
-
-.boardBanner .boardTitle {
-    font-family: Tahoma, sans-serif;
-    font-size: 24px;
-    font-weight: bold;
-    color: #af0a0f;
-    letter-spacing: -1px;
-}
-
-/* Форма отправки 1-в-1 как на оригинале */
-.postForm {
-    display: table;
-    margin: 0 auto 20px auto;
-    border-collapse: collapse;
-    background-color: #f0e0d6;
-    border: 1px solid #d9bfb7;
-}
-
-.postForm table {
-    border-collapse: collapse;
-}
-
-.postForm td {
-    padding: 3px;
-    border: 1px solid #d9bfb7;
-}
-
-.postForm td.label {
-    background-color: #e0e0e0;
-    color: #000000;
-    font-weight: bold;
-    font-size: 12px;
-    width: 80px;
-    text-align: left;
-}
-
-.postForm input[type="text"], .postForm textarea {
-    border: 1px solid #ccc;
-    font-family: monospace;
-    font-size: 13px;
-    padding: 2px;
-    width: 290px;
-    background-color: #fff;
+/* Классический 4chan/Двач Спойлер */
+.spoiler {
+    background-color: #000;
     color: #000;
-}
-
-/* Смайлики */
-.emoji-panel {
-    margin-top: 4px;
-    display: flex;
-    gap: 8px;
-}
-
-.emoji {
-    cursor: pointer;
-    font-size: 15px;
-    user-select: none;
-}
-
-.emoji:hover {
-    transform: scale(1.2);
-}
-
-/* Опция SAGE */
-.sage-label {
-    font-size: 12px;
-    color: #000;
-    margin-left: 10px;
+    text-shadow: none;
     cursor: pointer;
 }
-
-/* Контейнеры постов */
-.thread {
-    margin: 20px;
+.spoiler:hover {
+    color: #fff;
 }
 
-.opPost {
-    display: block;
-    margin-bottom: 10px;
+/* Трипкоды (зелёные идентификаторы) */
+.postInfo .tripcode {
+    color: #228854;
+    font-weight: normal;
 }
 
-.replyContainer {
-    display: table;
-    margin: 4px 0 4px 20px;
+/* Иконки треда (Закреп, Закрыт) */
+.thread-icon {
+    margin-right: 5px;
+    font-size: 14px;
 }
 
-/* Сами плашки ответов */
-.reply {
-    background-color: #f0e0d6;
-    border: 1px solid #d9bfb7;
-    border-radius: 0 4px 4px 0;
-    padding: 6px 12px;
-    display: block;
-}
-
-/* Подсветка при переходе по ссылке */
-.reply:target, .highlighted {
-    background-color: #f1c40f33 !important;
-    border: 1px solid #ff9f1c !important;
-}
-
-/* Информация о посте */
-.postInfo {
+/* Кнопка Админки (Логин) */
+.admin-login {
+    float: right;
     font-size: 12px;
-    color: #444;
-    margin-bottom: 4px;
-}
-
-.postInfo .subject {
-    color: #0f0c5d;
     font-weight: bold;
 }
 
-.postInfo .name {
-    color: #117743;
-    font-weight: bold;
-}
-
-.postInfo .postNum a {
-    text-decoration: none;
-    color: #34345c;
-}
-
-.postInfo .postNum a:hover {
-    color: #ff0000;
-}
-
-.share-btn {
-    background: none;
-    border: none;
-    color: #34345c;
-    font-size: 11px;
-    cursor: pointer;
-    text-decoration: underline;
-    padding: 0;
-    margin-left: 5px;
-}
-
-/* Текст сообщения */
-.postMessage {
-    color: #000000;
-    font-size: 13px;
-    line-height: 1.4;
-    margin: 8px 0;
-    white-space: pre-wrap;
-    word-break: break-all;
-}
-
-/* Гринтекст */
-.greentext {
-    color: #789922;
-}
-
-/* Ссылки на посты */
-.quotelink {
-    color: #ff0000;
-    text-decoration: underline;
-}
-
-/* Анимация картинок */
-.post-image {
-    max-width: 150px;
-    max-height: 150px;
-    cursor: zoom-in;
-    display: block;
-    margin: 5px 0;
-    border: 1px solid #d9bfb7;
-    transition: max-width 0.2s, max-height 0.2s;
-}
-
-.post-image.expanded {
-    max-width: 100% !important;
-    max-height: 500px !important;
-    cursor: zoom-out;
+/* Олдскульные колобки (заглушка под картинки) */
+.old-smiley {
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
 }

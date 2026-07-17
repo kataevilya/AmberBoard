@@ -1,15 +1,26 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Парсинг сообщений: Greentext + кликабельные >>ID ссылки
+// 1. Умный парсинг сообщений
     function parsePost(text) {
-        // Защита от XSS (безопасное экранирование тегов)
         let safeText = text
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;");
 
+        // Спойлеры [spoiler]текст[/spoiler]
+        safeText = safeText.replace(/\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi, '<span class="spoiler">$1</span>');
+
+        // YouTube плеер (авто-вставка видео)
+        safeText = safeText.replace(/(https?:\/\/(?:www\.)?youtube\.com\/watch\?v=|https?:\/\/youtu\.be\/)([a-zA-Z0-9_-]{11})/g, 
+            '<br><iframe width="320" height="180" src="https://www.youtube.com/embed/$2" frameborder="0" allowfullscreen></iframe><br>'
+        );
+
+        // Олдскульные смайлики (заменяем текст на картинки-колобки, если они у тебя будут в папке /static/smileys/)
+        // Пока используем спецсимволы как заглушки, но ты можешь вставить ссылки на GIF
+        safeText = safeText.replace(/(?<=^|\s):\)(?=\s|$)/g, ' <span style="color:#D68A00; font-weight:bold;">=)</span> ');
+        safeText = safeText.replace(/(?<=^|\s):D(?=\s|$)/g, ' <span style="color:#D68A00; font-weight:bold;">=D</span> ');
+
         let lines = safeText.split('\n');
         lines = lines.map(line => {
-            // Если строка начинается с > (и это не ссылка >>)
+            // Гринтекст
             if (line.startsWith('&gt;') && !line.startsWith('&gt;&gt;')) {
                 return `<span class="greentext">${line}</span>`;
             }
@@ -17,77 +28,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         safeText = lines.join('\n');
 
-        // Превращаем >>ID в кликабельные ссылки на посты
+        // Ссылки на посты >>ID
         return safeText.replace(/&gt;&gt;(\d+)/g, '<a href="#p$1" class="quotelink">&gt;&gt;$1</a>');
     }
 
-    // Запускаем парсинг для всех постов на странице
-    document.querySelectorAll('.postMessage').forEach(msg => {
-        const raw = msg.getAttribute('data-raw');
-        if (raw) {
-            msg.innerHTML = parsePost(raw);
-        }
-    });
-
-    // 2. Клик на No.123 — авто-вставка цитаты в текстовое поле
-    document.querySelectorAll('.num-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const postId = link.innerText.trim();
-            const textarea = document.getElementById('post-text');
+    // НОВАЯ ФУНКЦИЯ: Генератор трипкодов (Frontend-имитация для красоты)
+    // Если в имени есть решетка (Илья#secret), превращаем это в "Илья !abc123Xy"
+    document.querySelectorAll('.name').forEach(nameSpan => {
+        const rawName = nameSpan.innerText;
+        if (rawName.includes('#')) {
+            const parts = rawName.split('#');
+            const name = parts[0];
+            const password = parts[1];
             
-            if (textarea) {
-                textarea.value += `>>${postId}\n`;
-                textarea.focus();
+            // Простая генерация "хэша" для визуала
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                hash = ((hash << 5) - hash) + password.charCodeAt(i);
+                hash |= 0; 
             }
-        });
-    });
-
-    // 3. Зум картинок по клику
-    document.querySelectorAll('.post-image').forEach(img => {
-        img.addEventListener('click', () => {
-            img.classList.toggle('expanded');
-        });
-    });
-
-    // 4. Олдскульные эмодзи
-    document.querySelectorAll('.emoji').forEach(emoji => {
-        emoji.addEventListener('click', (e) => {
-            const textarea = document.getElementById('post-text');
-            const smileSymbol = e.target.getAttribute('data-smile') || e.target.innerText;
+            const tripcode = '!' + Math.abs(hash).toString(16).substring(0, 8);
             
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            textarea.value = textarea.value.substring(0, start) + ' ' + smileSymbol + ' ' + textarea.value.substring(end);
-            textarea.focus();
-        });
-    });
-
-    // 5. Кнопка быстрого копирования ссылки на пост
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('share-btn')) {
-            e.preventDefault();
-            const postId = e.target.getAttribute('data-id');
-            const postUrl = window.location.origin + window.location.pathname + '#p' + postId;
-            
-            navigator.clipboard.writeText(postUrl).then(() => {
-                alert('Ссылка на пост скопирована!');
-            });
+            nameSpan.innerHTML = `${name} <span class="tripcode">${tripcode}</span>`;
         }
     });
-
-    // 6. Подсветка постов при клике на quotelink (ссылку-цитату)
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('quotelink')) {
-            const targetId = e.target.getAttribute('href').replace('#', '');
-            const targetEl = document.getElementById(targetId);
-            if (targetEl) {
-                // Временно подсвечиваем рамку поста золотым цветом
-                targetEl.classList.add('highlighted');
-                setTimeout(() => {
-                    targetEl.classList.remove('highlighted');
-                }, 2000);
-            }
-        }
-    });
-});

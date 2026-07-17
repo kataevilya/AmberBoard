@@ -1,101 +1,18 @@
-{% include 'header.html' %}
-
-<div class="postForm">
-    <form action="" method="POST" enctype="multipart/form-data" id="new-thread-form">
-        <table>
-            <tbody>
-                <tr>
-                    <td class="label">Имя</td>
-                    <td><input type="text" name="name" id="post-name" placeholder="Аноним"></td>
-                </tr>
-                <tr>
-                    <td class="label">Тема</td>
-                    <td>
-                        <input type="text" name="subject" id="post-subject">
-                        <input type="submit" value="Отправить">
-                        <label class="sage-label">
-                            <input type="checkbox" name="sage" value="true"> SAGE
-                        </label>
-                    </td>
-                </tr>
-                <tr>
+<tr>
                     <td class="label">Текст</td>
                     <td>
                         <textarea name="comment" id="post-text" rows="4" required></textarea>
-                        <div class="emoji-panel">
-                            <span class="emoji" data-smile=":)">🙂</span>
-                            <span class="emoji" data-smile=":D">😀</span>
-                            <span class="emoji" data-smile=";)">😉</span>
-                            <span class="emoji" data-smile="pP">😋</span>
-                            <span class="emoji" data-smile="B)">😎</span>
-                            <span class="emoji" data-smile="O_o">🙄</span>
+                        <!-- Олдскульная панель -->
+                        <div class="emoji-panel" style="font-family: monospace; font-size: 11px; margin-top: 5px;">
+                            <span class="emoji" data-smile="[spoiler]Скрытый текст[/spoiler]">[Спойлер]</span>
+                            <span class="emoji" data-smile="( ͡° ͜ʖ ͡°)">( ͡° ͜ʖ ͡°)</span>
+                            <span class="emoji" data-smile="ಠ_ಠ">ಠ_ಠ</span>
+                            <span class="emoji" data-smile=">_>">>_></span>
+                            <span class="emoji" data-smile="*_*">*_*</span>
+                        </div>
+                        <div style="font-size: 10px; color: #555; margin-top: 5px;">
+                            * Поддерживаются ссылки на YouTube.<br>
+                            * Для трипкода введи Имя#пароль (например: Ilya#123)
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td class="label">Файл</td>
-                    <td><input type="file" name="file" id="post-file"></td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-</div>
-
-<hr style="border: 0; border-top: 1px solid #d9bfb7; margin: 15px 0;">
-
-<div id="threads-container">
-    {% for thread in threads %}
-    <div class="thread" id="t{{ thread.id }}">
-        
-        <!-- ОП-пост -->
-        <div class="opPost" id="p{{ thread.id }}">
-            <div class="postInfo">
-                {% if thread.subject %}
-                    <span class="subject">{{ thread.subject }}</span>
-                {% endif %}
-                <span class="name">{{ thread.author or thread.name or 'Аноним' }}</span> 
-                <span class="dateTime">{{ thread.date or thread.created_at or thread.timestamp }}</span> 
-                <span class="postNum">
-                    <a href="#p{{ thread.id }}">No.</a><a href="#p{{ thread.id }}" class="num-link">{{ thread.id }}</a>
-                </span>
-                <button class="share-btn" data-id="{{ thread.id }}">[Ссылка]</button>
-            </div>
-            
-            {% if thread.image or thread.file %}
-                <img src="{{ thread.image or thread.file }}" class="post-image" alt="">
-            {% endif %}
-            
-            <!-- data-raw нужен скрипту для умного парсинга гринтекста -->
-            <div class="postMessage" data-raw="{{ thread.text or thread.comment or thread.message }}"></div>
-        </div>
-
-        <!-- Ответы -->
-        {% for reply in thread.replies %}
-        <div class="replyContainer" id="p{{ reply.id }}">
-            <div class="reply">
-                <div class="postInfo">
-                    <span class="name">{{ reply.author or reply.name or 'Аноним' }}</span> 
-                    <span class="dateTime">{{ reply.date or reply.created_at or reply.timestamp }}</span> 
-                    <span class="postNum">
-                        <a href="#p{{ reply.id }}">No.</a><a href="#p{{ reply.id }}" class="num-link">{{ reply.id }}</a>
-                    </span>
-                    <button class="share-btn" data-id="{{ reply.id }}">[Ссылка]</button>
-                </div>
-                
-                {% if reply.image or reply.file %}
-                    <img src="{{ reply.image or reply.file }}" class="post-image" alt="">
-                {% endif %}
-                
-                <div class="postMessage" data-raw="{{ reply.text or reply.comment or reply.message }}"></div>
-            </div>
-        </div>
-        {% endfor %}
-        
-    </div>
-    <hr style="border: 0; border-top: 1px solid #d9bfb7; margin: 20px 0;">
-    {% else %}
-    <div style="text-align:center; padding: 40px;">Тут пока пусто. Будь первым аноном — создай тред!</div>
-    {% endfor %}
-</div>
-
-{% include 'footer.html' %}
