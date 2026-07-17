@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}/{{ board.code }}/ - {{ board.name }} - AmberBoard{% endblock %}
+{% block content %}
+
+<div class="board-header">
+    <h1 class="board-title">/{{ board.code }}/ - {{ board.name }}</h1>
+    <p class="board-subtitle">Добро пожаловать в янтарную обитель</p>
+</div>
+
+{% if current_user.is_authenticated %}
+<div class="post-form-container">
+    <div class="form-header">Создать новый тред</div>
+    <form method="POST" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td class="label">Заголовок</td>
+                <td><input type="text" name="title" placeholder="Необязательно (только для ОП)"></td>
+            </tr>
+            <tr>
+                <td class="label">Текст</td>
+                <td><textarea id="content-input" name="content" rows="5" placeholder="Текст вашего сообщения..." required></textarea></td>
+            </tr>
+            <tr>
+                <td class="label">Картинка</td>
+                <td><input type="file" name="image" accept="image/*"></td>
+            </tr>
+            <tr>
+                <td class="label">Опции</td>
+                <td>
+                    <label>
+                        <input type="checkbox" name="is_anonymous" value="y" checked> Отправить анонимно
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Создать тред"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+{% else %}
+<center style="margin: 20px 0;">
+    <p style="background:#FFE0B2; border:1px solid #FFB74D; display:inline-block; padding:8px 15px;">
+        Чтобы создавать новые треды и отправлять ответы, пожалуйста, <a href="/login">войдите</a> или <a href="/register">зарегистрируйтесь</a>.
+    </p>
+</center>
+{% endif %}
+
+<hr class="hr-divider">
+
+{% for thread in threads %}
+<div class="thread" id="p{{ thread.id }}">
+    <!-- OP Post -->
+    <div class="op-container">
+        <div class="post-header">
+            {% if thread.title %}<span class="post-title">{{ thread.title }}</span>{% endif %}
+            <span class="post-name {% if not thread.is_anonymous %}registered{% endif %}">
+                {% if thread.is_anonymous %}Аноним{% else %}{{ thread.author.username }}{% endif %}
+            </span>
+            {{ thread.timestamp.strftime('%d/%m/%y(%a)%H:%M:%S') }}
+            <span class="post-num" onclick="replyTo('{{ thread.id }}')">No.{{ thread.id }}</span>
+            
+            {% if thread.is_pinned %}<span class="badge badge-pinned">Закреплен</span>{% endif %}
+            {% if thread.is_locked %}<span class="badge badge-locked">Закрыт</span>{% endif %}
+            
+            <span class="thread-links">
+                [<a href="/{{ board.code }}/thread/{{ thread.id }}/">Открыть тред</a>]
+                {% if current_user.is_authenticated %}
+                    {% if current_user.id == thread.user_id or current_user.is_admin %}
+                        <a href="/delete/{{ thread.id }}/" style="color:red; margin-left: 10px;">[Удалить тред]</a>
+                    {% endif %}
+                    {% if current_user.is_admin %}
+                        <a href="/toggle-pin/{{ thread.id }}/" style="color:blue; margin-left:5px;">[Pin]</a>
+                        <a href="/toggle-lock/{{ thread.id }}/" style="color:gray; margin-left:5px;">[Lock]</a>
+                    {% endif %}
+                {% endif %}
+            </span>
+        </div>
+        
+        {% if thread.image_url %}
+        <div class="post-image-container">
+            <div class="image-info">Превью файла</div>
+            <a href="{{ thread.image_url }}" target="_blank">
+                <img src="{{ thread.image_url }}" alt="OP Image">
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="post-body">{{ thread.content | format_post }}</div>
+        <div class="clear"></div>
+    </div>
+
+    <!-- Preview of last 5 replies -->
+    {% for reply in thread.preview_replies %}
+    <div class="reply-container" id="p{{ reply.id }}">
+        <div class="post-header">
+            <span class="post-name {% if not reply.is_anonymous %}registered{% endif %}">
+                {% if reply.is_anonymous %}Аноним{% else %}{{ reply.author.username }}{% endif %}
+            </span>
+            {{ reply.timestamp.strftime('%d/%m/%y(%a)%H:%M:%S') }}
+            <span class="post-num" onclick="replyTo('{{ reply.id }}')">No.{{ reply.id }}</span>
+            
+            {% if current_user.is_authenticated and (current_user.id == reply.user_id or current_user.is_admin) %}
+                <a href="/delete/{{ reply.id }}/" style="color:red; margin-left: 10px;">[Удалить]</a>
+            {% endif %}
+        </div>
+        
+        {% if reply.image_url %}
+        <div class="post-image-container">
+            <a href="{{ reply.image_url }}" target="_blank">
+                <img src="{{ reply.image_url }}" alt="Reply Image">
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="post-body">{{ reply.content | format_post }}</div>
+        <div class="clear"></div>
+    </div>
+    {% endfor %}
+</div>
+<hr class="hr-divider">
+{% endfor %}
+
+{% endblock %}

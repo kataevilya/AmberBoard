@@ -1,35 +1,115 @@
-{% extends "base.html" %}
-{% block content %}
-{% if current_user.is_authenticated %}
-<center>
-    <div class="post-form">
-        <form method="POST" enctype="multipart/form-data">
-            <table>
-                <tr><td><b>Имя</b></td><td>{{ current_user.username }}</td></tr>
-                <tr><td><b>Текст</b></td><td><textarea name="content" rows="4" cols="40" required></textarea></td></tr>
-                <tr><td><b>Файл</b></td><td><input type="file" name="image" accept="image/*"></td></tr>
-                <tr><td></td><td><input type="submit" value="Отправить"></td></tr>
-            </table>
-        </form>
-    </div>
-</center>
-<hr color="#D55A00" width="90%">
-{% endif %}
-{% for post in posts %}
-<div class="post">
-    <div class="post-header">
-        <span class="post-name">{{ post.author.username }}</span> 
-        {{ post.timestamp.strftime('%d/%m/%y(%a)%H:%M:%S') }} No.{{ post.id }}
-        {% if current_user.is_authenticated and current_user.id == post.user_id %}
-            <a href="/delete/{{ post.id }}" class="del-btn">[Удалить]</a>
-        {% endif %}
-    </div>
-    {% if post.image_url %}
-    <div class="post-image">
-        <a href="{{ post.image_url }}" target="_blank"><img src="{{ post.image_url }}" alt="image"></a>
-    </div>
-    {% endif %}
-    <div class="post-content">{{ post.content }}</div>
-</div>
-{% endfor %}
-{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmberBoard v2</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <!-- Тот самый клевер 4chan -->
+            <span class="clover-icon">🍀</span> 
+            <span class="title">AmberBoard</span> 
+            <span class="version">chan_v2</span>
+        </div>
+        <nav class="board-nav">
+            <a href="#/b/">/b/ - Бред</a>
+            <a href="#/dev/">/dev/ - Разработка</a>
+            <a href="#/druzhok/">/druzhok/ - Дружок</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Форма создания нового треда -->
+        <section class="form-section">
+            <div class="section-header">Создать быстрый ответ</div>
+            <form id="new-thread-form">
+                <input type="text" id="post-subject" placeholder="Тема (необязательно)">
+                <textarea id="post-text" placeholder="Текст сообщения (поддерживает >>номер и >greentext)..." required></textarea>
+                
+                <!-- Панель инструментов: Эмодзи и Картинка -->
+                <div class="toolbar">
+                    <div class="emoji-container">
+                        <button type="button" id="emoji-btn" class="tool-btn" title="Вставить смайлик">😀 Колобки</button>
+                        <div id="emoji-picker" class="emoji-picker hidden">
+                            <!-- Классический набор ретро-смайлов -->
+                            <span class="emoji-item" data-smile=":)">🙂</span>
+                            <span class="emoji-item" data-smile=":D">😀</span>
+                            <span class="emoji-item" data-smile=";)">😉</span>
+                            <span class="emoji-item" data-smile="pP">😋</span>
+                            <span class="emoji-item" data-smile="B)">😎</span>
+                            <span class="emoji-item" data-smile=":-O">😮</span>
+                            <span class="emoji-item" data-smile="X(">😡</span>
+                            <span class="emoji-item" data-smile=":'(">😭</span>
+                            <span class="emoji-item" data-smile=":-X">🤐</span>
+                            <span class="emoji-item" data-smile="(Y)">👍</span>
+                            <span class="emoji-item" data-smile="(N)">👎</span>
+                            <span class="emoji-item" data-smile="O_o">🙄</span>
+                            <span class="emoji-item" data-smile="*KISSED*">😘</span>
+                            <span class="emoji-item" data-smile="*FRIEND*">🤝</span>
+                            <span class="emoji-item" data-smile="*DRINK*">🍻</span>
+                            <span class="emoji-item" data-smile="*CLOWN*">🤡</span>
+                        </div>
+                    </div>
+                    
+                    <label class="file-upload-btn">
+                        📁 Прикрепить картинку
+                        <input type="file" id="post-file" accept="image/*" style="display: none;">
+                    </label>
+                    <span id="file-name-preview" class="file-preview-text"></span>
+                </div>
+
+                <div class="form-footer">
+                    <span class="tip">Форматирование: >>номер для ответа, >текст для гринтекста</span>
+                    <button type="submit" class="btn-submit">Отправить</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Лента тредов -->
+        <section class="threads-list" id="threads-container">
+            <div class="thread" id="thread-1">
+                <!-- ОП-Пост -->
+                <div class="post op-post" id="p1">
+                    <div class="post-header">
+                        <span class="subject">Добро пожаловать на обновленный AmberBoard!</span>
+                        <span class="author">Аноним</span>
+                        <span class="user-id">ID: S7f9A2c1</span>
+                        <span class="date">16.07.2026 16:45</span>
+                        <span class="post-number">#1</span>
+                        <button class="share-btn" data-id="1" title="Поделиться постом">🔗</button>
+                    </div>
+                    <div class="post-body">
+                        Интерфейс был полностью переписан с нуля! Теперь всё работает на чистом CSS Grid/Flexbox, добавлена адаптивность для мобилок, а дизайн выполнен в приятных темных тонах с неоново-янтарными акцентами. <br><br>
+                        <span class="greentext">>Будущее уже наступило</span><br>
+                        Все старые кэшированные стили больше не будут мозолить глаза. Попробуйте написать что-нибудь в форму выше!
+                    </div>
+                </div>
+                
+                <!-- Ответы -->
+                <div class="replies" id="replies-container-1">
+                    <div class="post reply-post" id="p2">
+                        <div class="post-header">
+                            <span class="author">Аноним</span>
+                            <span class="user-id">ID: d9K3j8L0</span>
+                            <span class="date">16.07.2026 16:48</span>
+                            <span class="post-number">#2</span>
+                            <button class="share-btn" data-id="2" title="Поделиться постом">🔗</button>
+                        </div>
+                        <div class="post-body">
+                            <a href="#p1" class="post-link">&gt;&gt;1</a> Дизайн реально пушка. Всё плавно открывается, и цвета не режут глаза в темноте.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Всплывающее уведомление -->
+    <div id="toast" class="toast hidden">Ссылка скопирована в буфер обмена!</div>
+
+    <script src="app.js"></script>
+</body>
+</html>

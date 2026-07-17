@@ -2,42 +2,330 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>AmberBoard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AmberBoard{% endblock %}</title>
     <style>
-        body { background-color: #FDF1D6; color: #800000; font-family: Arial, sans-serif; font-size: 10pt; margin: 10px; }
-        a { color: #D55A00; text-decoration: none; }
-        a:hover { color: #FF0000; }
-        .header { text-align: center; font-size: 24pt; font-weight: bold; margin-bottom: 20px; color: #AF4000; letter-spacing: 2px;}
-        .nav { text-align: right; margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid #D55A00; padding-bottom: 5px; }
-        .post-form { background-color: #F8D39D; border: 1px solid #D55A00; display: inline-block; padding: 10px; margin-bottom: 20px; }
-        .post-form table { border-collapse: collapse; }
-        .post-form td { padding: 2px; }
-        .post-form input[type="text"], .post-form textarea, .post-form input[type="password"] { border: 1px solid #A9A9A9; }
-        .post { background-color: #F5E2C8; border: 1px solid #D55A00; padding: 10px; margin-bottom: 15px; max-width: 800px; display: table; }
-        .post-header { font-size: 9pt; margin-bottom: 5px; }
-        .post-name { color: #AF4000; font-weight: bold; }
-        .post-image { float: left; margin-right: 15px; margin-bottom: 10px; }
-        .post-image img { max-width: 250px; border: 2px solid #D55A00; }
-        .post-content { display: block; overflow: hidden; white-space: pre-wrap; font-size: 10pt;}
-        .del-btn { color: #800000; font-size: 8pt; text-decoration: underline; margin-left: 10px; cursor: pointer; }
-        .flash { color: red; font-weight: bold; }
+        body {
+            background-color: #FDF1D6;
+            color: #800000;
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 10pt;
+            margin: 0;
+            padding: 0;
+        }
+        a { color: #D55A00; text-decoration: none; font-weight: bold; }
+        a:hover { color: #FF0000; text-decoration: underline; }
+        
+        /* Top Navigation Bar */
+        .nav-bar {
+            background: linear-gradient(to bottom, #FF9800, #E65100);
+            padding: 8px 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            color: #FFF;
+            font-size: 9pt;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #D55A00;
+        }
+        .nav-bar a {
+            color: #FFF;
+            margin: 0 8px;
+            font-weight: bold;
+        }
+        .nav-bar a:hover {
+            color: #FFE082;
+            text-decoration: none;
+        }
+        .nav-left { display: flex; align-items: center; }
+        .nav-right { display: flex; align-items: center; }
+        .boards-list {
+            border-right: 1px solid rgba(255,255,255,0.3);
+            padding-right: 15px;
+            margin-right: 15px;
+        }
+        
+        /* Board Header */
+        .board-header {
+            text-align: center;
+            margin: 30px 0 15px 0;
+        }
+        .board-title {
+            font-size: 28pt;
+            font-weight: 900;
+            color: #AF4000;
+            letter-spacing: -1px;
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .board-subtitle {
+            font-size: 10pt;
+            color: #800000;
+            margin: 5px 0 0 0;
+            font-style: italic;
+        }
+
+        /* Container for alerts */
+        .flash-container {
+            max-width: 600px;
+            margin: 15px auto;
+            text-align: center;
+        }
+        .flash {
+            background-color: #FFCDD2;
+            color: #C62828;
+            border: 1px solid #EF9A9A;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        /* Main wrapper */
+        .content-wrapper {
+            padding: 0 20px 50px 20px;
+        }
+
+        /* Retro Posting Form with Gradients */
+        .post-form-container {
+            display: block;
+            max-width: 600px;
+            margin: 20px auto;
+            background: linear-gradient(to bottom, #FFF3E0, #FFE0B2);
+            border: 1px solid #FF9800;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+        .form-header {
+            background: linear-gradient(to bottom, #FFA726, #FB8C00);
+            color: white;
+            padding: 6px 12px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 10pt;
+            border-bottom: 1px solid #FF9800;
+        }
+        .post-form-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .post-form-container td {
+            padding: 6px 10px;
+            font-size: 9pt;
+        }
+        .post-form-container td.label {
+            background-color: rgba(255, 152, 0, 0.15);
+            font-weight: bold;
+            width: 100px;
+            color: #800000;
+        }
+        .post-form-container input[type="text"], 
+        .post-form-container textarea, 
+        .post-form-container input[type="password"] {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #FFB74D;
+            background-color: #FFFDE7;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 9pt;
+        }
+        .post-form-container input[type="text"]:focus, 
+        .post-form-container textarea:focus {
+            outline: none;
+            border-color: #E65100;
+            background-color: #FFF;
+        }
+        .post-form-container input[type="submit"] {
+            background: linear-gradient(to bottom, #FFA726, #FB8C00);
+            color: white;
+            border: 1px solid #E65100;
+            padding: 6px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .post-form-container input[type="submit"]:hover {
+            background: linear-gradient(to bottom, #FB8C00, #F57C00);
+        }
+
+        /* Thread Structure */
+        .thread {
+            border-top: 1px solid #FFCC80;
+            padding: 20px 0;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        /* OP Post Style */
+        .op-container {
+            margin-bottom: 15px;
+        }
+        .post-header {
+            font-size: 9pt;
+            color: #444;
+            margin-bottom: 6px;
+        }
+        .post-title {
+            color: #0F0C5D;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        .post-name {
+            color: #117743;
+            font-weight: bold;
+        }
+        .post-name.registered {
+            color: #AF4000;
+        }
+        .post-num {
+            color: #D55A00;
+            cursor: pointer;
+        }
+        .post-num:hover {
+            color: red;
+        }
+        .post-image-container {
+            float: left;
+            margin: 5px 20px 10px 0;
+            text-align: center;
+        }
+        .post-image-container img {
+            max-width: 200px;
+            max-height: 200px;
+            border: 2px solid #FFB74D;
+            background-color: #FFF;
+            display: block;
+        }
+        .image-info {
+            font-size: 8pt;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .post-body {
+            font-size: 10pt;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Indented Reply Style like 4chan */
+        .reply-container {
+            display: table;
+            margin: 6px 0 6px 40px;
+            background: linear-gradient(135deg, #FFE8D6 0%, #F5D3B3 100%);
+            border: 1px solid #FFB74D;
+            padding: 8px 12px;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.05);
+        }
+        .reply-container:hover {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-color: #FF9800;
+        }
+        .reply-container .post-image-container img {
+            max-width: 125px;
+            max-height: 125px;
+        }
+
+        /* Custom Tags & Badges */
+        .badge {
+            font-size: 7.5pt;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .badge-admin {
+            background-color: #D32F2F;
+            color: white;
+        }
+        .badge-pinned {
+            background-color: #FFA000;
+            color: white;
+        }
+        .badge-locked {
+            background-color: #757575;
+            color: white;
+        }
+
+        /* Greentext rules */
+        .greentext {
+            color: #789922;
+            font-family: inherit;
+            font-weight: bold;
+        }
+        .post-link {
+            color: #D55A00;
+            text-decoration: underline;
+            font-weight: normal;
+        }
+        .post-link:hover {
+            color: red;
+        }
+        
+        /* Utils */
+        .clear {
+            clear: both;
+        }
+        .thread-links {
+            font-size: 9pt;
+            margin-top: 10px;
+        }
+        .hr-divider {
+            border: 0;
+            border-top: 1px solid #FFCC80;
+            margin: 40px 0;
+        }
     </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="/">[Главная]</a>
-        {% if current_user.is_authenticated %}
-            <a href="/profile">[Профиль: {{ current_user.username }}]</a>
-            <a href="/logout">[Выход]</a>
-        {% else %}
-            <a href="/login">[Вход]</a>
-            <a href="/register">[Регистрация]</a>
-        {% endif %}
+    <div class="nav-bar">
+        <div class="nav-left">
+            <span class="boards-list">
+                [
+                {% for b in g_boards %}
+                    <a href="/{{ b.code }}/">/{{ b.code }}/</a>
+                {% endfor %}
+                ]
+            </span>
+            <a href="/">Доски</a>
+        </div>
+        <div class="nav-right">
+            {% if current_user.is_authenticated %}
+                <span style="margin-right: 10px;">Вошли как: <a href="/profile" class="post-name registered">{{ current_user.username }}</a></span>
+                {% if current_user.is_admin %}
+                    <span class="badge badge-admin" style="margin-right: 15px;">Модератор</span>
+                {% endif %}
+                <a href="/profile">[Профиль]</a>
+                <a href="/logout">[Выход]</a>
+            {% else %}
+                <a href="/login">[Вход]</a>
+                <a href="/register">[Регистрация]</a>
+            {% endif %}
+        </div>
     </div>
-    <div class="header">AmberBoard</div>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}{% for message in messages %}<div class="flash">{{ message }}</div>{% endfor %}{% endif %}
-    {% endwith %}
-    {% block content %}{% endblock %}
+
+    <div class="flash-container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="content-wrapper">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <script>
+        function replyTo(id) {
+            var txt = document.getElementById("content-input");
+            if (txt) {
+                txt.value += ">>" + id + "\n";
+                txt.focus();
+            }
+        }
+    </script>
 </body>
 </html>

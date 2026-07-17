@@ -1,13 +1,23 @@
 {% extends "base.html" %}
+{% block title %}Профиль {{ current_user.username }} - AmberBoard{% endblock %}
 {% block content %}
 <center>
-    <div class="post-form">
-        <h3>Настройки профиля</h3>
+    <div class="post-form-container" style="max-width: 500px; margin-top: 40px;">
+        <div class="form-header">Редактирование профиля</div>
         <form method="POST">
-            <table>
-                <tr><td>Имя:</td><td><input type="text" name="username" value="{{ current_user.username }}" required></td></tr>
-                <tr><td>О себе:</td><td><textarea name="bio" rows="3" cols="30">{{ current_user.bio }}</textarea></td></tr>
-                <tr><td></td><td><input type="submit" value="Сохранить изменения"></td></tr>
+            <table style="margin: 15px 0;">
+                <tr>
+                    <td class="label">Имя:</td>
+                    <td><input type="text" name="username" value="{{ current_user.username }}" required></td>
+                </tr>
+                <tr>
+                    <td class="label">Статус:</td>
+                    <td><textarea name="bio" rows="4" placeholder="Напишите что-нибудь о себе...">{{ current_user.bio }}</textarea></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Сохранить изменения"></td>
+                </tr>
             </table>
         </form>
     </div>
