@@ -1,39 +1,146 @@
-/* --- НОВЫЕ ФУНКЦИИ --- */
-
-/* Классический 4chan/Двач Спойлер */
-.spoiler {
-    background-color: #000;
-    color: #000;
-    text-shadow: none;
-    cursor: pointer;
-}
-.spoiler:hover {
-    color: #fff;
+/* === ОРИГИНАЛЬНАЯ YOTSUBA С ГРАДИЕНТАМИ === */
+body {
+    background: #ffffee url('https://s.4cdn.org/image/fade-green.png') repeat-x;
+    color: #800000;
+    font-family: arial, helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
 }
 
-/* Трипкоды (зелёные идентификаторы) */
-.postInfo .tripcode {
-    color: #228854;
-    font-weight: normal;
-}
-
-/* Иконки треда (Закреп, Закрыт) */
-.thread-icon {
-    margin-right: 5px;
-    font-size: 14px;
-}
-
-/* Кнопка Админки (Логин) */
-.admin-login {
-    float: right;
+/* Верхняя и нижняя панели с красивым градиентом */
+.adminbar {
+    background: linear-gradient(to bottom, #fcaeaf 0%, #ffc0c0 100%);
+    border-bottom: 1px solid #d9bfb7;
+    padding: 4px 8px;
     font-size: 12px;
-    font-weight: bold;
+    color: #4f0a0b;
+    display: flex;
+    justify-content: space-between;
 }
 
-/* Олдскульные колобки (заглушка под картинки) */
-.old-smiley {
-    vertical-align: middle;
-    width: 16px;
-    height: 16px;
-    display: inline-block;
+.adminbar a { text-decoration: none; color: #34345c; font-weight: bold; }
+.adminbar a:hover { color: #ff0000; }
+
+/* Логотип доски */
+.boardBanner { text-align: center; margin: 15px 0; }
+.boardBanner .boardTitle {
+    font-family: Tahoma, sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    color: #af0a0f;
+    letter-spacing: -2px;
+    text-shadow: 1px 1px 2px #ea8;
 }
+
+/* Форма отправки с тенями */
+.postForm {
+    display: table;
+    margin: 0 auto 20px auto;
+    background: #f0e0d6;
+    border: 1px solid #d9bfb7;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.postForm table { border-collapse: collapse; }
+.postForm td { padding: 4px; }
+.postForm td.label {
+    background: linear-gradient(to bottom, #eacbc4 0%, #e0b0a0 100%);
+    color: #800000;
+    font-weight: bold;
+    font-size: 12px;
+    border: 1px solid #d9bfb7;
+}
+
+.postForm input[type="text"], .postForm textarea {
+    border: 1px solid #aaa;
+    font-family: arial, sans-serif;
+    font-size: 13px;
+    padding: 3px;
+    width: 300px;
+}
+
+/* Кнопки и навигация */
+.navLinks { text-align: right; margin-right: 20px; font-size: 12px; }
+.navLinks a { margin-left: 10px; font-weight: bold; }
+
+/* Посты и треды */
+.thread { margin: 10px 20px; padding-bottom: 10px; border-bottom: 1px solid #d9bfb7; }
+.opPost { margin-bottom: 5px; }
+
+.replyContainer { display: table; margin: 2px 0 2px 20px; }
+.reply {
+    background: #f0e0d6;
+    border: 1px solid #d9bfb7;
+    border-right: 2px solid #d9bfb7;
+    border-bottom: 2px solid #d9bfb7;
+    padding: 6px 12px;
+    display: block;
+}
+
+.highlighted { background: #d6bad0 !important; border: 1px solid #ba9ab4 !important; }
+
+/* Текст и детали постов */
+.postInfo { font-size: 12px; color: #444; margin-bottom: 5px; }
+.postInfo .subject { color: #0f0c5d; font-weight: bold; }
+.postInfo .name { color: #117743; font-weight: bold; }
+.postInfo .tripcode { color: #228854; font-weight: normal; }
+.postInfo .dateTime { margin: 0 5px; }
+.postInfo .postNum a { text-decoration: none; color: #34345c; }
+.postInfo .postNum a:hover { color: #ff0000; }
+
+.fileText { font-size: 11px; color: #555; margin-bottom: 5px; }
+.fileText a { text-decoration: underline; color: #34345c; }
+
+.postMessage {
+    color: #000;
+    font-size: 13px;
+    line-height: 1.2;
+    margin: 10px 0 10px 20px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Фишки: Гринтекст, Спойлеры, Картинки */
+.greentext { color: #789922; }
+.quotelink { color: #d00; text-decoration: underline; cursor: pointer; }
+.spoiler { background: #000; color: #000; padding: 0 2px; }
+.spoiler:hover { color: #fff; }
+
+.post-image {
+    float: left;
+    max-width: 250px;
+    max-height: 250px;
+    margin: 5px 20px 10px 0;
+    cursor: zoom-in;
+    border: 1px solid #a00;
+}
+.post-image.expanded {
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    float: none;
+    display: block;
+    cursor: zoom-out;
+}
+
+/* ПЛАВАЮЩИЙ QUICK REPLY (ОЧЕНЬ КРУТАЯ ФИШКА) */
+#qr-box {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #f0e0d6;
+    border: 1px solid #d9bfb7;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+#qr-header {
+    background: linear-gradient(to bottom, #eacbc4 0%, #e0b0a0 100%);
+    padding: 5px;
+    font-weight: bold;
+    cursor: move;
+    display: flex;
+    justify-content: space-between;
+}
+#qr-header span { cursor: pointer; }
+#qr-box input[type="text"], #qr-box textarea { width: 100%; box-sizing: border-box; margin-bottom: 2px; }

@@ -1,18 +1,148 @@
-<tr>
-                    <td class="label">Текст</td>
-                    <td>
-                        <textarea name="comment" id="post-text" rows="4" required></textarea>
-                        <!-- Олдскульная панель -->
-                        <div class="emoji-panel" style="font-family: monospace; font-size: 11px; margin-top: 5px;">
-                            <span class="emoji" data-smile="[spoiler]Скрытый текст[/spoiler]">[Спойлер]</span>
-                            <span class="emoji" data-smile="( ͡° ͜ʖ ͡°)">( ͡° ͜ʖ ͡°)</span>
-                            <span class="emoji" data-smile="ಠ_ಠ">ಠ_ಠ</span>
-                            <span class="emoji" data-smile=">_>">>_></span>
-                            <span class="emoji" data-smile="*_*">*_*</span>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmberBoard - /{{ board }}/</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="adminbar">
+        <span class="boardList">
+            [ <a href="/b/">b</a> / <a href="/dev/">dev</a> / <a href="/druzhok/">druzhok</a> ]
+        </span>
+        <span class="customMenu">
+            [ <a href="/">Домой</a> ] [ <a href="/login">Логин</a> ]
+        </span>
+    </div>
+    
+    <div class="boardBanner">
+        <div class="boardTitle">/{{ board }}/ - {{ board_title | default('Бред') }}</div>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #d9bfb7; margin: 15px 0;">
+
+    <div class="navLinks">
+        [<a href="#">Обновить</a>] [<a href="#footer">Вниз</a>]
+    </div>
+
+    <div class="postForm" id="main-form">
+        <form action="" method="POST" enctype="multipart/form-data">
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="label">Имя</td>
+                        <td><input type="text" name="name" placeholder="Аноним"></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Тема</td>
+                        <td>
+                            <input type="text" name="subject">
+                            <input type="submit" value="Отправить">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Текст</td>
+                        <td>
+                            <textarea name="comment" id="main-textarea" rows="4" required></textarea>
+                            <div style="font-size: 11px; margin-top: 2px; display: flex; gap: 5px;">
+                                <a href="javascript:void(0)" class="js-tag" data-tag="[spoiler]">[Спойлер]</a>
+                                <a href="javascript:void(0)" class="js-tag" data-tag=">">>Гринтекст</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Файл</td>
+                        <td><input type="file" name="file"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #d9bfb7; margin: 15px 0;">
+
+    <form id="delform" action="/delete" method="POST">
+        <div id="threads-container">
+            {% for thread in threads %}
+            <div class="thread" id="t{{ thread.id }}">
+                
+                <div class="opPost" id="p{{ thread.id }}">
+                    {% if thread.image or thread.file %}
+                        <div class="fileText">Файл: <a href="{{ thread.image or thread.file }}" target="_blank">{{ thread.filename | default('image.jpg') }}</a> (124 KB, 800x600)</div>
+                        <img src="{{ thread.image or thread.file }}" class="post-image" alt="">
+                    {% endif %}
+                    
+                    <div class="postInfo">
+                        <input type="checkbox" name="delete_id" value="{{ thread.id }}">
+                        {% if thread.subject %}<span class="subject">{{ thread.subject }}</span>{% endif %}
+                        <span class="name js-name">{{ thread.author or thread.name or 'Аноним' }}</span> 
+                        <span class="dateTime">{{ thread.date or thread.created_at or thread.timestamp }}</span> 
+                        <span class="postNum">
+                            <a href="#p{{ thread.id }}">No.</a><a href="#p{{ thread.id }}" class="num-link" data-id="{{ thread.id }}">{{ thread.id }}</a>
+                        </span>
+                        <span>[<a href="#" class="reply-link" data-id="{{ thread.id }}">Ответ</a>]</span>
+                    </div>
+                    
+                    <div class="postMessage" data-raw="{{ thread.text or thread.comment or thread.message }}"></div>
+                </div>
+
+                {% for reply in thread.replies %}
+                <div class="replyContainer" id="p{{ reply.id }}">
+                    <div class="reply">
+                        <div class="postInfo">
+                            <input type="checkbox" name="delete_id" value="{{ reply.id }}">
+                            <span class="name js-name">{{ reply.author or reply.name or 'Аноним' }}</span> 
+                            <span class="dateTime">{{ reply.date or reply.created_at or reply.timestamp }}</span> 
+                            <span class="postNum">
+                                <a href="#p{{ reply.id }}">No.</a><a href="#p{{ reply.id }}" class="num-link" data-id="{{ reply.id }}">{{ reply.id }}</a>
+                            </span>
                         </div>
-                        <div style="font-size: 10px; color: #555; margin-top: 5px;">
-                            * Поддерживаются ссылки на YouTube.<br>
-                            * Для трипкода введи Имя#пароль (например: Ilya#123)
-                        </div>
-                    </td>
-                </tr>
+                        
+                        {% if reply.image or reply.file %}
+                            <div class="fileText">Файл: <a href="{{ reply.image or reply.file }}" target="_blank">{{ reply.filename | default('image.jpg') }}</a></div>
+                            <img src="{{ reply.image or reply.file }}" class="post-image" alt="">
+                        {% endif %}
+                        
+                        <div class="postMessage" data-raw="{{ reply.text or reply.comment or reply.message }}"></div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div style="clear:both;"></div>
+            </div>
+            {% else %}
+            <div style="text-align:center; padding: 40px; font-size: 16px;">Тут пока пусто. Создай первый тред!</div>
+            {% endfor %}
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #d9bfb7; margin: 20px 0;">
+        
+        <div style="text-align: right; margin: 10px 20px;">
+            Пароль для удаления: <input type="password" name="password" size="12">
+            <input type="submit" value="Удалить посты">
+        </div>
+    </form>
+
+    <div class="adminbar" id="footer">
+        <span class="boardList">
+            [ <a href="/b/">b</a> / <a href="/dev/">dev</a> / <a href="/druzhok/">druzhok</a> ]
+        </span>
+        <span>
+            [ <a href="#">Наверх</a> ]
+        </span>
+    </div>
+
+    <!-- Плавающая форма (Quick Reply) -->
+    <div id="qr-box">
+        <div id="qr-header">Быстрый ответ <span id="qr-close">X</span></div>
+        <form action="" method="POST" enctype="multipart/form-data" style="padding: 5px;">
+            <input type="text" name="name" placeholder="Имя">
+            <textarea name="comment" id="qr-textarea" rows="5" required></textarea>
+            <input type="file" name="file" style="margin-bottom: 5px;">
+            <input type="submit" value="Ответить" style="width: 100%;">
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
