@@ -1,27 +1,27 @@
 {% include 'header.html' %}
 
-<!-- Каноничная табличная форма отправки -->
 <div class="postForm">
     <form action="" method="POST" enctype="multipart/form-data" id="new-thread-form">
         <table>
             <tbody>
                 <tr>
-                    <td>Name</td>
-                    <td><input type="text" name="name" id="post-name" placeholder="Anonymous"></td>
+                    <td class="label">Имя</td>
+                    <td><input type="text" name="name" id="post-name" placeholder="Аноним"></td>
                 </tr>
                 <tr>
-                    <td>Subject</td>
+                    <td class="label">Тема</td>
                     <td>
                         <input type="text" name="subject" id="post-subject">
-                        <input type="submit" value="Submit">
+                        <input type="submit" value="Отправить">
+                        <label class="sage-label">
+                            <input type="checkbox" name="sage" value="true"> SAGE
+                        </label>
                     </td>
                 </tr>
                 <tr>
-                    <td>Comment</td>
+                    <td class="label">Текст</td>
                     <td>
                         <textarea name="comment" id="post-text" rows="4" required></textarea>
-                        
-                        <!-- Смайлы как на старом 4pda -->
                         <div class="emoji-panel">
                             <span class="emoji" data-smile=":)">🙂</span>
                             <span class="emoji" data-smile=":D">😀</span>
@@ -29,12 +29,11 @@
                             <span class="emoji" data-smile="pP">😋</span>
                             <span class="emoji" data-smile="B)">😎</span>
                             <span class="emoji" data-smile="O_o">🙄</span>
-                            <span class="emoji" data-smile="X(">😡</span>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>File</td>
+                    <td class="label">Файл</td>
                     <td><input type="file" name="file" id="post-file"></td>
                 </tr>
             </tbody>
@@ -42,75 +41,60 @@
     </form>
 </div>
 
-<hr>
+<hr style="border: 0; border-top: 1px solid #d9bfb7; margin: 15px 0;">
 
-<!-- Сетка тредов и постов -->
 <div id="threads-container">
     {% for thread in threads %}
     <div class="thread" id="t{{ thread.id }}">
         
-        <!-- ОП-пост (Главный пост треда) -->
-        <div class="postContainer opContainer" id="p{{ thread.id }}">
-            <div class="opPost">
-                <div class="postInfo">
-                    {% if thread.subject %}
-                        <span class="subject" style="color:#0f0c5d; font-weight:bold;">{{ thread.subject }}</span>
-                    {% endif %}
-                    <span class="name" style="color:#117743; font-weight:bold;">{{ thread.author or thread.name or 'Anonymous' }}</span> 
-                    <span class="dateTime">{{ thread.date or thread.created_at or thread.timestamp }}</span> 
-                    <span class="postNum">
-                        <a href="#p{{ thread.id }}">No.</a><a href="#p{{ thread.id }}">{{ thread.id }}</a>
-                    </span>
-                    <button class="share-btn" data-id="{{ thread.id }}">[🔗 Ссылка]</button>
-                    <a href="/thread/{{ thread.id }}" class="reply-link" style="margin-left:8px; text-decoration:none; color:#34345c;">[Ответить]</a>
-                </div>
-                
-                {% if thread.image or thread.file %}
-                <div class="fileText" style="font-size:12px; margin:5px 0;">
-                    File: <a href="{{ thread.image or thread.file }}" target="_blank">{{ thread.image or thread.file }}</a>
-                </div>
-                <img src="{{ thread.image or thread.file }}" class="post-image" style="max-width:150px; max-height:150px; display:block; margin:5px 0;" alt="">
+        <!-- ОП-пост -->
+        <div class="opPost" id="p{{ thread.id }}">
+            <div class="postInfo">
+                {% if thread.subject %}
+                    <span class="subject">{{ thread.subject }}</span>
                 {% endif %}
-                
-                <div class="postMessage" style="margin:10px 0;">
-                    {{ thread.text or thread.comment or thread.message }}
-                </div>
+                <span class="name">{{ thread.author or thread.name or 'Аноним' }}</span> 
+                <span class="dateTime">{{ thread.date or thread.created_at or thread.timestamp }}</span> 
+                <span class="postNum">
+                    <a href="#p{{ thread.id }}">No.</a><a href="#p{{ thread.id }}" class="num-link">{{ thread.id }}</a>
+                </span>
+                <button class="share-btn" data-id="{{ thread.id }}">[Ссылка]</button>
             </div>
+            
+            {% if thread.image or thread.file %}
+                <img src="{{ thread.image or thread.file }}" class="post-image" alt="">
+            {% endif %}
+            
+            <!-- data-raw нужен скрипту для умного парсинга гринтекста -->
+            <div class="postMessage" data-raw="{{ thread.text or thread.comment or thread.message }}"></div>
         </div>
 
-        <!-- Ответы в этот тред -->
-        <div class="replies" style="margin-left: 30px; margin-top: 10px;">
-            {% for reply in thread.replies %}
-            <div class="postContainer replyContainer" id="p{{ reply.id }}" style="margin-bottom: 6px;">
-                <div class="reply" style="background-color: #d6daf0; padding: 6px 10px; display: inline-block; border: 1px solid #b7c5d9;">
-                    <div class="postInfo">
-                        <span class="name" style="color:#117743; font-weight:bold;">{{ reply.author or reply.name or 'Anonymous' }}</span> 
-                        <span class="dateTime">{{ reply.date or reply.created_at or reply.timestamp }}</span> 
-                        <span class="postNum">
-                            <a href="#p{{ reply.id }}" style="text-decoration:none; color:#34345c;">No.</a><a href="#p{{ reply.id }}" style="text-decoration:none; color:#34345c;">{{ reply.id }}</a>
-                        </span>
-                        <button class="share-btn" data-id="{{ reply.id }}">[🔗 Ссылка]</button>
-                    </div>
-                    
-                    {% if reply.image or reply.file %}
-                    <div class="fileText" style="font-size:12px; margin:5px 0;">
-                        File: <a href="{{ reply.image or reply.file }}" target="_blank">{{ reply.image or reply.file }}</a>
-                    </div>
-                    <img src="{{ reply.image or reply.file }}" class="post-image" style="max-width:125px; max-height:125px; display:block; margin:5px 0;" alt="">
-                    {% endif %}
-                    
-                    <div class="postMessage" style="margin-top: 5px;">
-                        {{ reply.text or reply.comment or reply.message }}
-                    </div>
+        <!-- Ответы -->
+        {% for reply in thread.replies %}
+        <div class="replyContainer" id="p{{ reply.id }}">
+            <div class="reply">
+                <div class="postInfo">
+                    <span class="name">{{ reply.author or reply.name or 'Аноним' }}</span> 
+                    <span class="dateTime">{{ reply.date or reply.created_at or reply.timestamp }}</span> 
+                    <span class="postNum">
+                        <a href="#p{{ reply.id }}">No.</a><a href="#p{{ reply.id }}" class="num-link">{{ reply.id }}</a>
+                    </span>
+                    <button class="share-btn" data-id="{{ reply.id }}">[Ссылка]</button>
                 </div>
+                
+                {% if reply.image or reply.file %}
+                    <img src="{{ reply.image or reply.file }}" class="post-image" alt="">
+                {% endif %}
+                
+                <div class="postMessage" data-raw="{{ reply.text or reply.comment or reply.message }}"></div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
         
     </div>
-    <hr style="border: 0; border-top: 1px solid #b7c5d9; margin: 20px 0;">
+    <hr style="border: 0; border-top: 1px solid #d9bfb7; margin: 20px 0;">
     {% else %}
-    <div style="text-align:center; padding: 40px; color: #555;">Тут пока пусто. Создай первый тред!</div>
+    <div style="text-align:center; padding: 40px;">Тут пока пусто. Будь первым аноном — создай тред!</div>
     {% endfor %}
 </div>
 
