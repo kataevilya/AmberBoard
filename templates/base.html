@@ -2,119 +2,86 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}AMBER BOARD{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <title>{% block title %}AmberBoard{% endblock %}</title>
     <style>
-        :root {
-            --bg-black: #000000;
-            --header-yellow: #FFD700;
-            --column-gradient: linear-gradient(180deg, #FFD700 0%, #FF8C00 100%);
-            --post-red: #E61919;
-            --text-dark: #111111;
-            --text-light: #FFFFFF;
-        }
-
+        /* Строгая оранжевая 4chan-палитра */
         body {
-            background-color: var(--bg-black);
-            color: var(--text-dark);
-            font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
-            margin: 0; padding: 20px;
+            background-color: #FFF3E0;
+            color: #333333;
+            font-family: arial, helvetica, sans-serif;
+            font-size: 10pt;
+            margin: 0;
+            padding: 8px;
+        }
+        a { color: #D84315; text-decoration: none; }
+        a:hover { color: #FF3D00; }
+
+        #boardNavDesktop {
+            font-size: 9pt;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
         }
 
-        .board-container {
-            max-width: 1200px; margin: 0 auto;
-            background-color: white; border: 4px solid var(--text-dark);
+        .boardBanner { text-align: center; clear: both; }
+        .boardTitle {
+            color: #BF360C; font-size: 28px; font-weight: bold;
+            letter-spacing: 2px; margin-top: 10px;
         }
 
-        .header {
-            background-color: var(--header-yellow);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 20px; border-bottom: 4px solid var(--text-dark);
+        table.postForm { margin: 0 auto; border-spacing: 1px; font-size: 10pt; }
+        table.postForm td { padding: 0; }
+        .postblock {
+            background-color: #FFB74D; color: #5D4037; font-weight: bold;
+            border: 1px solid #F57C00; padding: 2px 5px; text-align: left;
         }
+        table.postForm input[type="text"], table.postForm textarea {
+            border: 1px solid #BCAAA4; margin: 0; padding: 2px;
+        }
+        table.postForm textarea { width: 300px; height: 120px; }
+        hr { border: none; border-top: 1px solid #FFCC80; margin: 15px 0; }
 
-        .header h1 {
-            font-family: 'VT323', monospace; font-size: 3rem; margin: 0;
-            text-transform: uppercase; letter-spacing: 2px;
+        .board { margin: 0; padding: 0; }
+        .thread { margin-bottom: 20px; }
+        .postContainer { margin-top: 4px; }
+        .reply {
+            background-color: #FFE0B2; border-right: 1px solid #FFCC80;
+            border-bottom: 1px solid #FFCC80; display: table; padding: 2px 4px 6px 4px;
+        }
+        .postInfo { display: block; margin-bottom: 5px; }
+        .subject { color: #D84315; font-weight: bold; }
+        .name { color: #2E7D32; font-weight: bold; }
+        .dateTime { margin: 0 5px; }
+        .postNum a { color: #5D4037; text-decoration: none; }
+        .postNum a:hover { color: #D84315; }
+        
+        .file { display: block; }
+        .fileText { font-size: 8pt; }
+        .fileThumb { float: left; margin: 2px 20px 10px 5px; border: none; }
+        .fileThumb div {
+            width: 250px; height: 140px; background-color: #FFCC80;
+            text-align: center; line-height: 140px; color: #D84315; border: 1px solid #F57C00;
         }
         
-        .header a { color: var(--text-dark); text-decoration: none; }
-
-        .board-links {
-            background: #222; color: #fff; padding: 5px 20px;
-            font-family: monospace; font-size: 14px;
-        }
-        .board-links a { color: #FFD700; text-decoration: none; margin-right: 10px; }
-        .board-links a:hover { text-decoration: underline; color: #FFF; }
-
-        .content { background: var(--column-gradient); min-height: 80vh; padding: 20px; }
-
-        /* Форма постинга (стиль 4chan) */
-        .post-form {
-            background: rgba(255, 255, 255, 0.9);
-            border: 3px solid var(--text-dark);
-            padding: 15px; margin: 0 auto 30px auto;
-            max-width: 600px; box-shadow: 4px 4px 0px var(--text-dark);
-        }
-        
-        .post-form table { width: 100%; }
-        .post-form td { padding: 4px; }
-        .post-form input[type="text"], .post-form textarea {
-            width: 100%; box-sizing: border-box;
-            border: 2px solid var(--text-dark); padding: 5px;
-        }
-        .post-form button {
-            background: var(--post-red); color: white; border: 2px solid var(--text-dark);
-            padding: 5px 15px; font-weight: bold; cursor: pointer;
-        }
-
-        /* Посты */
-        .post-card {
-            background-color: var(--post-red);
-            border: 3px solid var(--text-dark); border-radius: 8px;
-            padding: 15px; margin-bottom: 15px; color: var(--text-light);
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
-            display: inline-block; min-width: 40%; max-width: 100%;
-        }
-
-        /* Выделение поста при переходе по ссылке (Target) */
-        .post-card:target {
-            border-color: #FFF;
-            box-shadow: 0 0 15px #FFD700, 4px 4px 0px rgba(0,0,0,0.5);
-            animation: pulse 2s;
-        }
-
-        @keyframes pulse {
-            0% { background-color: #FF5555; }
-            100% { background-color: var(--post-red); }
-        }
-
-        .post-header {
-            font-size: 0.85rem; margin-bottom: 10px;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 5px;
-        }
-        .post-header .name { font-weight: bold; color: #FFD700; }
-        .post-header a.post-num { color: #FFF; text-decoration: none; }
-        .post-header a.post-num:hover { color: #FFD700; }
-
-        .greentext { color: #7FFF00; }
-        .post-link { color: #FFD700; text-decoration: underline; font-weight: bold; }
+        .postMessage { margin: 1em 1em 1em 3em; word-wrap: break-word; }
+        .quote { color: #789922; }
+        .quotelink { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <div class="board-container">
-        <div class="header">
-            <h1><a href="/">Amber Board</a></h1>
-            <div>
-                <a href="/login" style="background:#FFE600; padding:5px 10px; border:3px solid #000; box-shadow: 3px 3px 0 #000;">LOGIN</a>
-            </div>
-        </div>
-        <div class="board-links">
-            [ <a href="/">home</a> / <a href="/b/">b</a> / <a href="/dev/">dev</a> / <a href="/h/">h</a> ]
-        </div>
-        
-        <div class="content">
-            {% block content %}{% endblock %}
-        </div>
+    <div id="boardNavDesktop">
+        <span class="boardList">
+            [<a href="/">home</a>]
+            [<a href="/b/">b</a>]
+            [<a href="/dev/">dev</a>]
+            [<a href="/h/">h</a>]
+        </span>
+        <span class="customBoardList">
+            [<a href="/login">login</a>]
+            [<a href="/register">register</a>]
+        </span>
     </div>
+
+    {% block content %}{% endblock %}
 </body>
 </html>
