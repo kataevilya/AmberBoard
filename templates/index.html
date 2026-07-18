@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - AmberBoard{% endblock %}
+
+{% block content %}
+<style>
+    .grid-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+    .thread-item { padding: 15px; border-bottom: 1px dashed var(--light-orange); }
+    .thread-meta { font-size: 0.9em; color: #666; margin-bottom: 5px; }
+    .author { color: #2E7D32; font-weight: bold; }
+    
+    @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
+</style>
+
+<div class="grid-layout">
+    <aside>
+        <div class="content-box">
+            <h2 class="box-title">Популярные доски</h2>
+            <div style="padding: 15px;">
+                <ul>
+                    <li><a href="#">/b/ - Бред</a></li>
+                    <li><a href="#">/dev/ - Разработка</a></li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <div class="content-box">
+            <h2 class="box-title">Последние треды</h2>
+            <div class="thread-item">
+                <div class="thread-meta">
+                    <span class="author">Аноним</span> 07/18/26(Sat)22:05:12 №1234567
+                </div>
+                <strong>Обновление движка</strong>
+                <p>Выкатил новую версию интерфейса. Теперь всё разбито на разные страницы.</p>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
