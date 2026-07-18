@@ -2,56 +2,84 @@
 {% block title %}/{{ board_uri }}/ - {{ board_info.name }}{% endblock %}
 
 {% block content %}
-<h2 style="text-align: center; font-family: 'VT323'; font-size: 2.5rem; text-transform: uppercase;">
-    /{{ board_uri }}/ - {{ board_info.name }}
-</h2>
+    <div class="boardBanner">
+        <div class="boardTitle">/{{ board_uri }}/ - {{ board_info.name }}</div>
+    </div>
 
-<div class="post-form">
-    <form method="POST">
-        <table>
-            <tr><td>Имя</td><td><input type="text" name="name" placeholder="Anonymous"></td></tr>
-            <tr><td>Тема</td><td><input type="text" name="title" required></td></tr>
-            <tr><td>Текст</td><td><textarea name="comment" rows="4" required></textarea></td></tr>
-            <tr><td></td><td><button type="submit">Создать тред</button></td></tr>
+    <hr>
+
+    <form name="post" action="/{{ board_uri }}/" method="POST">
+        <table class="postForm">
+            <tbody>
+                <tr>
+                    <td class="postblock">Name</td>
+                    <td><input type="text" name="name" placeholder="Anonymous" size="28"></td>
+                </tr>
+                <tr>
+                    <td class="postblock">Subject</td>
+                    <td>
+                        <input type="text" name="subject" size="35">
+                        <input type="submit" value="Post">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="postblock">Comment</td>
+                    <td><textarea name="com"></textarea></td>
+                </tr>
+            </tbody>
         </table>
     </form>
-</div>
 
-<hr style="border: 2px solid #000; margin-bottom: 30px;">
+    <hr>
 
-{% for tid, thread in threads.items() %}
-    <div style="margin-bottom: 40px;">
-        <!-- ОП Пост -->
-        <div class="post-card" id="p{{ thread.op_post.id }}">
-            <div class="post-header">
-                <span class="name">{{ thread.op_post.name }}</span> 
-                {{ thread.timestamp }} 
-                <a href="/{{ board_uri }}/thread/{{ tid }}#p{{ thread.op_post.id }}" class="post-num" title="Ссылка на пост">№{{ thread.op_post.id }}</a>
-                <strong>{{ thread.title }}</strong>
-                <a href="/{{ board_uri }}/thread/{{ tid }}" style="color: #FFD700; margin-left: 10px;">[В тред]</a>
+    <div class="board">
+        {% for tid, thread in threads.items()|reverse %}
+        <div class="thread" id="t{{ thread.op.id }}">
+            <div class="postContainer opContainer" id="pc{{ thread.op.id }}">
+                <div class="op" id="p{{ thread.op.id }}">
+                    <div class="file" id="f{{ thread.op.id }}">
+                        <div class="fileText">File: <a href="#">image.png</a> (150 KB)</div>
+                        <a class="fileThumb" href="#">
+                            <div>Изображение</div>
+                        </a>
+                    </div>
+                    
+                    <div class="postInfo desktop" id="pi{{ thread.op.id }}">
+                        <span class="subject">{{ thread.subject }}</span>
+                        <span class="name">{{ thread.op.name }}</span>
+                        <span class="dateTime">{{ thread.timestamp }}</span>
+                        <span class="postNum">
+                            <a href="#p{{ thread.op.id }}">No.</a><a href="#p{{ thread.op.id }}">{{ thread.op.id }}</a>
+                        </span>
+                        <span>[<a href="/{{ board_uri }}/thread/{{ tid }}">Reply</a>]</span>
+                    </div>
+                    
+                    <blockquote class="postMessage" id="m{{ thread.op.id }}">
+                        {{ thread.op.comment|safe }}
+                    </blockquote>
+                </div>
             </div>
-            <div class="post-content">
-                {{ thread.op_post.comment|safe }}
+
+            <!-- Тут цикл для ответов (replies), если они есть -->
+            {% for reply in thread.replies %}
+            <div class="postContainer replyContainer" id="pc{{ reply.id }}">
+                <div class="sideArrows" style="display: none;">&gt;&gt;</div>
+                <div class="post reply" id="p{{ reply.id }}">
+                    <div class="postInfo desktop" id="pi{{ reply.id }}">
+                        <span class="name">{{ reply.name }}</span>
+                        <span class="dateTime">{{ reply.timestamp }}</span>
+                        <span class="postNum">
+                            <a href="#p{{ reply.id }}">No.</a><a href="#p{{ reply.id }}">{{ reply.id }}</a>
+                        </span>
+                    </div>
+                    <blockquote class="postMessage" id="m{{ reply.id }}">
+                        {{ reply.comment|safe }}
+                    </blockquote>
+                </div>
             </div>
+            {% endfor %}
         </div>
-        
-        <br>
-        
-        <!-- Показываем последние 3 ответа как тизеры (как на 4chan) -->
-        {% for reply in thread.replies[-3:] %}
-            <div class="post-card" id="p{{ reply.id }}" style="margin-left: 50px; background-color: #C61515;">
-                <div class="post-header">
-                    <span class="name">{{ reply.name }}</span> 
-                    {{ reply.timestamp }} 
-                    <a href="/{{ board_uri }}/thread/{{ tid }}#p{{ reply.id }}" class="post-num">№{{ reply.id }}</a>
-                </div>
-                <div class="post-content">
-                    {{ reply.comment|safe }}
-                </div>
-            </div>
-            <br>
+        <hr>
         {% endfor %}
     </div>
-{% endfor %}
-
 {% endblock %}
