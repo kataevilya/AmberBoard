@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Тред №{{ thread_id }}{% endblock %}
+
+{% block content %}
+<div class="board-links" style="background: transparent; padding: 0; margin-bottom: 20px;">
+    <a href="/{{ board_uri }}/" style="color: var(--text-dark); font-weight: bold;">[Назад в каталог]</a>
+</div>
+
+<div class="post-form">
+    <form method="POST">
+        <table>
+            <tr><td>Имя</td><td><input type="text" name="name" placeholder="Anonymous"></td></tr>
+            <tr><td>Ответ</td><td><textarea name="comment" rows="5" required></textarea></td></tr>
+            <tr><td></td><td><button type="submit">Отправить</button></td></tr>
+        </table>
+    </form>
+</div>
+
+<hr style="border: 2px solid #000; margin-bottom: 30px;">
+
+<!-- ОП Пост -->
+<div class="post-card" id="p{{ thread.op_post.id }}">
+    <div class="post-header">
+        <span class="name">{{ thread.op_post.name }}</span> 
+        {{ thread.timestamp }} 
+        <!-- Якорь #p1000000 для шеринга -->
+        <a href="#p{{ thread.op_post.id }}" class="post-num">№{{ thread.op_post.id }}</a>
+        <strong>{{ thread.title }}</strong>
+    </div>
+    <div class="post-content">
+        {{ thread.op_post.comment|safe }}
+    </div>
+</div>
+
+<br>
+
+<!-- Все ответы -->
+{% for reply in thread.replies %}
+    <div class="post-card" id="p{{ reply.id }}" style="margin-left: 50px; background-color: #C61515;">
+        <div class="post-header">
+            <span class="name">{{ reply.name }}</span> 
+            {{ reply.timestamp }} 
+            <!-- Якорь для шеринга каждого ответа -->
+            <a href="#p{{ reply.id }}" class="post-num">№{{ reply.id }}</a>
+        </div>
+        <div class="post-content">
+            {{ reply.comment|safe }}
+        </div>
+    </div>
+    <br>
+{% endfor %}
+
+{% endblock %}
