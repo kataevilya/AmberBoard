@@ -1,34 +1,45 @@
-{% include 'header.html' %}
+{% extends "base.html" %}
 
-<div style="text-align: center; margin-top: 50px;">
-    <div class="boardBanner">
-        <div class="boardTitle">Управление / Вход</div>
-    </div>
+{% block title %}Вход - AmberBoard{% endblock %}
 
-    <!-- Каноничная табличная форма для логина -->
-    <div class="postForm" style="display: inline-block; text-align: left;">
-        <form action="{{ url_for('login') }}" method="POST">
-            <table>
-                <tbody>
-                    <tr>
-                        <td class="label">Пароль</td>
-                        <td>
-                            <input type="password" name="password" required autofocus>
-                            <input type="submit" value="Login">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    </div>
-    
-    {% if error %}
-        <div style="color: red; font-weight: bold; margin-top: 10px;">{{ error }}</div>
-    {% endif %}
+{% block content %}
+<style>
+    .auth-form-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .form-group { margin-bottom: 15px; }
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+    }
+    .submit-btn {
+        width: 100%;
+        padding: 10px;
+        background-color: var(--primary-orange);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .submit-btn:hover { background-color: var(--dark-orange); }
+</style>
 
-    <div style="margin-top: 20px;">
-        [<a href="{{ url_for('board_view', board=board) }}">Назад к доске</a>]
-    </div>
+<div class="content-box auth-form-container">
+    <h2 class="box-title" style="text-align: center;">Вход в аккаунт</h2>
+    <form action="/login" method="POST" style="padding: 20px;">
+        <div class="form-group">
+            <input type="text" name="username" placeholder="Логин" required>
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Пароль" required>
+        </div>
+        <button type="submit" class="submit-btn">Войти</button>
+    </form>
 </div>
-
-{% include 'footer.html' %}
+{% endblock %}
