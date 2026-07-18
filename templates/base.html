@@ -2,113 +2,119 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-width=1.0">
-    <title>{% block title %}AmberBoard{% endblock %}</title>
+    <title>{% block title %}AMBER BOARD{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-orange: #FF8C00;
-            --light-orange: #FFCC80;
-            --dark-orange: #E65100;
-            --bg-color: #FFFDF8;
-            --text-main: #333333;
-            --border-color: #FFB74D;
+            --bg-black: #000000;
+            --header-yellow: #FFD700;
+            --column-gradient: linear-gradient(180deg, #FFD700 0%, #FF8C00 100%);
+            --post-red: #E61919;
+            --text-dark: #111111;
+            --text-light: #FFFFFF;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
+            background-color: var(--bg-black);
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+            margin: 0; padding: 20px;
         }
 
-        a { color: var(--dark-orange); text-decoration: none; }
-        a:hover { color: var(--primary-orange); text-decoration: underline; }
-
-        /* Навигация */
-        .top-navbar {
-            background-color: var(--primary-orange);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .board-container {
+            max-width: 1200px; margin: 0 auto;
+            background-color: white; border: 4px solid var(--text-dark);
         }
 
-        .board-links a {
-            color: white;
-            margin-right: 15px;
-            font-weight: bold;
+        .header {
+            background-color: var(--header-yellow);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 20px; border-bottom: 4px solid var(--text-dark);
         }
 
-        .auth-links a {
-            color: white;
-            margin-left: 15px;
-            font-weight: bold;
-            border: 1px solid white;
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-
-        .auth-links a:hover {
-            background-color: white;
-            color: var(--dark-orange);
-            text-decoration: none;
-        }
-
-        .site-header { text-align: center; padding: 30px 0; }
-        .site-header h1 { color: var(--dark-orange); font-size: 3em; margin: 0; }
-
-        /* Контейнеры */
-        .content-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px 40px 20px;
+        .header h1 {
+            font-family: 'VT323', monospace; font-size: 3rem; margin: 0;
+            text-transform: uppercase; letter-spacing: 2px;
         }
         
-        .content-box {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            margin-bottom: 20px;
+        .header a { color: var(--text-dark); text-decoration: none; }
+
+        .board-links {
+            background: #222; color: #fff; padding: 5px 20px;
+            font-family: monospace; font-size: 14px;
+        }
+        .board-links a { color: #FFD700; text-decoration: none; margin-right: 10px; }
+        .board-links a:hover { text-decoration: underline; color: #FFF; }
+
+        .content { background: var(--column-gradient); min-height: 80vh; padding: 20px; }
+
+        /* Форма постинга (стиль 4chan) */
+        .post-form {
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid var(--text-dark);
+            padding: 15px; margin: 0 auto 30px auto;
+            max-width: 600px; box-shadow: 4px 4px 0px var(--text-dark);
         }
         
-        .box-title {
-            background-color: var(--light-orange);
-            color: var(--dark-orange);
-            padding: 10px 15px;
-            font-weight: bold;
-            margin: 0;
-            border-bottom: 1px solid var(--border-color);
+        .post-form table { width: 100%; }
+        .post-form td { padding: 4px; }
+        .post-form input[type="text"], .post-form textarea {
+            width: 100%; box-sizing: border-box;
+            border: 2px solid var(--text-dark); padding: 5px;
         }
+        .post-form button {
+            background: var(--post-red); color: white; border: 2px solid var(--text-dark);
+            padding: 5px 15px; font-weight: bold; cursor: pointer;
+        }
+
+        /* Посты */
+        .post-card {
+            background-color: var(--post-red);
+            border: 3px solid var(--text-dark); border-radius: 8px;
+            padding: 15px; margin-bottom: 15px; color: var(--text-light);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+            display: inline-block; min-width: 40%; max-width: 100%;
+        }
+
+        /* Выделение поста при переходе по ссылке (Target) */
+        .post-card:target {
+            border-color: #FFF;
+            box-shadow: 0 0 15px #FFD700, 4px 4px 0px rgba(0,0,0,0.5);
+            animation: pulse 2s;
+        }
+
+        @keyframes pulse {
+            0% { background-color: #FF5555; }
+            100% { background-color: var(--post-red); }
+        }
+
+        .post-header {
+            font-size: 0.85rem; margin-bottom: 10px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 5px;
+        }
+        .post-header .name { font-weight: bold; color: #FFD700; }
+        .post-header a.post-num { color: #FFF; text-decoration: none; }
+        .post-header a.post-num:hover { color: #FFD700; }
+
+        .greentext { color: #7FFF00; }
+        .post-link { color: #FFD700; text-decoration: underline; font-weight: bold; }
     </style>
 </head>
 <body>
-
-    <div class="top-navbar">
+    <div class="board-container">
+        <div class="header">
+            <h1><a href="/">Amber Board</a></h1>
+            <div>
+                <a href="/login" style="background:#FFE600; padding:5px 10px; border:3px solid #000; box-shadow: 3px 3px 0 #000;">LOGIN</a>
+            </div>
+        </div>
         <div class="board-links">
-            <a href="/">[home]</a>
-            <a href="#">[a]</a>
-            <a href="#">[b]</a>
-            <a href="#">[dev]</a>
-            <a href="#">[h]</a> <!-- Вкладка истории -->
+            [ <a href="/">home</a> / <a href="/b/">b</a> / <a href="/dev/">dev</a> / <a href="/h/">h</a> ]
         </div>
-        <div class="auth-links">
-            <a href="/login">Войти</a>
-            <a href="/register">Регистрация</a>
+        
+        <div class="content">
+            {% block content %}{% endblock %}
         </div>
     </div>
-
-    <header class="site-header">
-        <h1>AmberBoard</h1>
-        <p>Анонимная и открытая площадка</p>
-    </header>
-
-    <div class="content-container">
-        <!-- Сюда будет подгружаться контент других страниц -->
-        {% block content %}{% endblock %}
-    </div>
-
 </body>
 </html>
