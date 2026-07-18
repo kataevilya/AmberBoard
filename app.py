@@ -1,18 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for
 import time
 import re
 
 app = Flask(__name__)
-app.secret_key = "super_secret_amber_key" # Нужно для flash-сообщений
 
-# Имитация базы данных
+# Имитация БД
 db = {
     "boards": {
-        "b": {"name": "Random", "desc": "Бред и общение"},
-        "dev": {"name": "Development", "desc": "Кодинг и проекты"}
+        "b": {"name": "Random", "desc": "Бред"},
+        "dev": {"name": "Development", "desc": "Разработка"}
     },
-    "threads": {}, # Формат: { thread_id: { board: 'b', title: '...', op_post: {}, replies: [] } }
-    "post_counter": 1000000 # Стартовый номер поста (как на 4chan)
+    "threads": {},
+    "post_counter": 1000000
 }
 
 def generate_post_id():
@@ -20,15 +19,13 @@ def generate_post_id():
     return db["post_counter"]
 
 def format_comment(text):
-    """Парсер для гринтекста и ссылок на посты (>>123456)"""
     lines = text.split('\n')
     formatted = []
     for line in lines:
         if line.startswith('>'):
-            formatted.append(f'<span class="greentext">{line}</span>')
+            formatted.append(f'<span class="quote">{line}</span>')
         else:
-            # Превращаем >>123456 в кликабельную ссылку
-            line = re.sub(r'>>(\d+)', r'<a href="#p\1" class="post-link">&gt;&gt;\1</a>', line)
+            line = re.sub(r'>>(\d+)', r'<a href="#p\1" class="quotelink">&gt;&gt;\1</a>', line)
             formatted.append(line)
     return '<br>'.join(formatted)
 
@@ -36,61 +33,28 @@ def format_comment(text):
 def index():
     return render_template('index.html', boards=db["boards"])
 
-# РОУТ ДОСКИ (Каталог тредов)
 @app.route('/<board_uri>/', methods=['GET', 'POST'])
 def board(board_uri):
     if board_uri not in db["boards"]:
         return "Доска не найдена", 404
         
     if request.method == 'POST':
-        # Создание нового треда
-        title = request.form.get('title', 'Без темы')
         name = request.form.get('name', 'Anonymous')
-        comment = request.form.get('comment', '')
+        subject = request.form.get('subject', '')
+        comment = request.form.get('com', '')
         
         post_id = generate_post_id()
-        thread_id = post_id # ID треда = ID первого поста
-        
-        db["threads"][thread_id] = {
+        db["threads"][post_id] = {
             "board": board_uri,
-            "title": title,
-            "timestamp": time.strftime("%d/%m/%y(%a)%H:%M"),
-            "op_post": {
-                "id": post_id,
-                "name": name,
-                "comment": format_comment(comment)
-            },
+            "subject": subject,
+            "timestamp": time.strftime("%m/%d/%y(%a)%H:%M:%S"),
+            "op": {"id": post_id, "name": name, "comment": format_comment(comment)},
             "replies": []
         }
-        return redirect(url_for('view_thread', board_uri=board_uri, thread_id=thread_id))
+        return redirect(url_for('board', board_uri=board_uri))
 
-    # Получаем треды только для текущей доски
     board_threads = {tid: t for tid, t in db["threads"].items() if t["board"] == board_uri}
     return render_template('board.html', board_uri=board_uri, board_info=db["boards"][board_uri], threads=board_threads)
-
-# РОУТ ТРЕДА (Просмотр и ответы)
-@app.route('/<board_uri>/thread/<int:thread_id>', methods=['GET', 'POST'])
-def view_thread(board_uri, thread_id):
-    thread = db["threads"].get(thread_id)
-    if not thread or thread["board"] != board_uri:
-        return "Тред не найден", 404
-
-    if request.method == 'POST':
-        # Добавление ответа в тред
-        name = request.form.get('name', 'Anonymous')
-        comment = request.form.get('comment', '')
-        
-        post_id = generate_post_id()
-        thread["replies"].append({
-            "id": post_id,
-            "name": name,
-            "timestamp": time.strftime("%d/%m/%y(%a)%H:%M"),
-            "comment": format_comment(comment)
-        })
-        # Редирект на тот же тред с якорем на новый пост (шеринг)
-        return redirect(url_for('view_thread', board_uri=board_uri, thread_id=thread_id) + f'#p{post_id}')
-
-    return render_template('thread.html', board_uri=board_uri, thread_id=thread_id, thread=thread)
 
 if __name__ == '__main__':
     app.run(debug=True)
