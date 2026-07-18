@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>{% block title %}AmberBoard{% endblock %}</title>
+    <style>
+        :root {
+            --primary-orange: #FF8C00;
+            --light-orange: #FFCC80;
+            --dark-orange: #E65100;
+            --bg-color: #FFFDF8;
+            --text-main: #333333;
+            --border-color: #FFB74D;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        a { color: var(--dark-orange); text-decoration: none; }
+        a:hover { color: var(--primary-orange); text-decoration: underline; }
+
+        /* Навигация */
+        .top-navbar {
+            background-color: var(--primary-orange);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .board-links a {
+            color: white;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .auth-links a {
+            color: white;
+            margin-left: 15px;
+            font-weight: bold;
+            border: 1px solid white;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .auth-links a:hover {
+            background-color: white;
+            color: var(--dark-orange);
+            text-decoration: none;
+        }
+
+        .site-header { text-align: center; padding: 30px 0; }
+        .site-header h1 { color: var(--dark-orange); font-size: 3em; margin: 0; }
+
+        /* Контейнеры */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 40px 20px;
+        }
+        
+        .content-box {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .box-title {
+            background-color: var(--light-orange);
+            color: var(--dark-orange);
+            padding: 10px 15px;
+            font-weight: bold;
+            margin: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-navbar">
+        <div class="board-links">
+            <a href="/">[home]</a>
+            <a href="#">[a]</a>
+            <a href="#">[b]</a>
+            <a href="#">[dev]</a>
+            <a href="#">[h]</a> <!-- Вкладка истории -->
+        </div>
+        <div class="auth-links">
+            <a href="/login">Войти</a>
+            <a href="/register">Регистрация</a>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <h1>AmberBoard</h1>
+        <p>Анонимная и открытая площадка</p>
+    </header>
+
+    <div class="content-container">
+        <!-- Сюда будет подгружаться контент других страниц -->
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
